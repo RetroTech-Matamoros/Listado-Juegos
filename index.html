@@ -5,6 +5,77 @@
 <title>Instalación de Juegos</title>
 
 <style>
+
+  /* ===== CRT RETRO EFFECT ===== */
+
+body{
+  background:#0a0a0a;
+  color:#00ff66;
+  text-shadow:0 0 5px #00ff66;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* scanlines */
+body::after{
+  content:"";
+  pointer-events:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.25) 3px
+  );
+  z-index:999;
+}
+
+/* flicker suave */
+@keyframes flicker{
+  0%{opacity:0.95;}
+  50%{opacity:1;}
+  100%{opacity:0.96;}
+}
+
+body{
+  animation:flicker 0.15s infinite;
+}
+
+/* bordes glow */
+.container{
+  box-shadow:0 0 20px #00ff66;
+}
+
+/* botones retro */
+button{
+  background:#001a00;
+  color:#00ff66;
+  border:2px solid #00ff66;
+  box-shadow:0 0 10px #00ff66;
+}
+
+button:hover{
+  background:#003300;
+  box-shadow:0 0 20px #00ff66;
+}
+
+/* inputs retro */
+input, select{
+  background:#001a00;
+  color:#00ff66;
+  border:1px solid #00ff66;
+}
+
+/* barra neon */
+.bar{
+  background:#00ff66;
+  box-shadow:0 0 10px #00ff66;
+}
+
 body{
   background:#0b0b0b;
   color:#00ff99;
@@ -195,6 +266,7 @@ async function enviar(){
 
 </body>
 </html>
+
 
 
 
