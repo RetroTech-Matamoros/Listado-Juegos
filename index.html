@@ -6,13 +6,16 @@
 
 <style>
 
-/* ===== CRT RETRO LIMPIO ===== */
+/* =========================
+   CRT RETRO MODERNO
+========================= */
 
 body{
   background:#0b0b0b;
   color:#00ff99;
   font-family:'Courier New', monospace;
   text-align:center;
+  margin:0;
 }
 
 /* scanlines */
@@ -31,23 +34,27 @@ body::after{
 }
 
 .container{
-  max-width:900px;
+  max-width:950px;
   margin:auto;
   padding:20px;
-  box-shadow:0 0 20px #00ff99;
+  box-shadow:0 0 25px #00ff99;
   border-radius:12px;
+  margin-top:20px;
+  animation:fade .4s ease;
 }
 
-.logo{
-  max-width:200px;
-  margin:10px auto;
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 h1,h2{
   color:#00ffff;
 }
 
-select,input,button{
+/* inputs */
+
+select,input{
   width:100%;
   padding:10px;
   margin:8px 0;
@@ -57,10 +64,24 @@ select,input,button{
   border-radius:6px;
 }
 
+/* botones */
+
 button{
+  padding:10px;
+  margin:8px 0;
+  background:#00ff99;
+  color:#000;
   font-weight:bold;
+  border:none;
+  border-radius:6px;
   cursor:pointer;
 }
+
+button:hover{
+  background:#00ffff;
+}
+
+/* progreso */
 
 .progress{
   height:20px;
@@ -72,41 +93,81 @@ button{
   height:100%;
   width:0%;
   background:#00ff99;
+  transition:.3s;
 }
 
-.console{
-  margin-top:20px;
-  border:1px solid #00ff99;
+/* grid juegos */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:12px;
+  margin-top:15px;
+}
+
+.card{
+  background:#111;
+  border:2px solid #00ff99;
+  border-radius:10px;
   padding:10px;
-  border-radius:8px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.card:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 10px #00ffff;
+}
+
+.card input{
+  margin-bottom:6px;
+}
+
+.smallBtn{
+  background:#222;
+  color:#00ff99;
+  border:1px solid #00ff99;
+}
+
+.smallBtn:hover{
+  background:#00ff99;
+  color:#000;
 }
 
 </style>
 </head>
 
+
 <body>
 
-<!-- ===== SELECTOR CONSOLA ===== -->
+<!-- =========================
+   SELECTOR CONSOLA
+========================= -->
+
 <div id="consoleSection" class="container">
 
-  <img src="logo.png" class="logo">
+<h2>🎮 Selecciona consola</h2>
 
-  <h2>🎮 Selecciona consola</h2>
+<select id="consoleSelect">
+  <option value="">Elegir...</option>
+  <option value="Switch">🟦 Switch</option>
+  <option value="GameCube">🟪 GameCube</option>
+  <option value="PSP">⬛ PSP</option>
+</select>
 
-  <select id="consoleSelect">
-    <option value="">Elegir...</option>
-    <option value="Switch">Switch</option>
-    <option value="GameCube">GameCube</option>
-    <option value="PSP">PSP</option>
-  </select>
-
-  <button onclick="start()">Continuar</button>
+<button onclick="start()">Continuar</button>
 
 </div>
 
 
-<!-- ===== SECCIÓN JUEGOS ===== -->
+
+<!-- =========================
+   JUEGOS
+========================= -->
+
 <div id="gamesSection" class="container" style="display:none;">
+
+<button class="smallBtn" onclick="volver()">← Cambiar consola</button>
 
 <h1>🎮 Instalación de Juegos</h1>
 
@@ -126,7 +187,7 @@ button{
   <div class="bar" id="bar"></div>
 </div>
 
-<div id="lista"></div>
+<div id="lista" class="grid"></div>
 
 <button onclick="enviar()">Enviar pedido</button>
 
@@ -136,19 +197,12 @@ button{
 
 <script>
 
-/* ===== CAMBIO PANTALLA ===== */
-function start(){
-  const val=document.getElementById("consoleSelect").value;
-  if(!val) return alert("Selecciona una consola");
+/* =========================
+   VARIABLES
+========================= */
 
-  document.getElementById("consoleSection").style.display="none";
-  document.getElementById("gamesSection").style.display="block";
-}
+let consolaActiva="";
 
-
-
-/* ===== JUEGOS ===== */
-let consolaActiva = "";
 const juegos={
   "Switch":[["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14]],
   "GameCube":[["Mario Sunshine",1.5],["Luigi Mansion",1.2],["Wind Waker",1.4]],
@@ -158,32 +212,64 @@ const juegos={
 const lista=document.getElementById("lista");
 const buscador=document.getElementById("buscador");
 
-function render(){
+
+/* =========================
+   CAMBIO PANTALLAS
+========================= */
+
+function start(){
+  const val=document.getElementById("consoleSelect").value;
+
+  if(!val) return alert("Selecciona una consola");
+
+  consolaActiva=val;
+
+  document.getElementById("consoleSection").style.display="none";
+  document.getElementById("gamesSection").style.display="block";
+
+  render();
+}
+
+function volver(){
+  document.getElementById("gamesSection").style.display="none";
+  document.getElementById("consoleSection").style.display="block";
+  consolaActiva="";
   lista.innerHTML="";
-const juegosConsola = juegos[consolaActiva];
+}
 
-let html=`<div class="console"><h3>${consolaActiva}</h3>`;
 
-juegosConsola.forEach(j=>{
+/* =========================
+   RENDER TARJETAS
+========================= */
 
-    let html=`<div class="console"><h3>${consola}</h3>`;
-    juegos[consola].forEach(j=>{
-      if(j[0].toLowerCase().includes(buscador.value.toLowerCase())){
-        html+=`
-        <label>
+function render(){
+
+  if(!consolaActiva) return;
+
+  lista.innerHTML="";
+
+  juegos[consolaActiva].forEach(j=>{
+
+    if(!j[0].toLowerCase().includes(buscador.value.toLowerCase())) return;
+
+    lista.innerHTML+=`
+      <label class="card">
         <input type="checkbox" value="${j[1]}" data-name="${j[0]}">
-        ${j[0]} (${j[1]} GB)
-        </label><br>`;
-      }
-    });
-    html+="</div>";
-    lista.innerHTML+=html;
-  }
+        🎮 <b>${j[0]}</b><br>
+        💾 ${j[1]} GB
+      </label>
+    `;
+  });
+
   activar();
 }
 
-render();
 buscador.addEventListener("input",render);
+
+
+/* =========================
+   CAPACIDAD
+========================= */
 
 function activar(){
   document.querySelectorAll("input[type=checkbox]")
@@ -191,6 +277,7 @@ function activar(){
 }
 
 function calcular(){
+
   let total=0;
   const cap=Number(document.getElementById("capacidad").value);
 
@@ -209,6 +296,9 @@ function calcular(){
 }
 
 
+/* =========================
+   ENVIAR
+========================= */
 
 async function enviar(){
 
@@ -225,6 +315,7 @@ async function enviar(){
   await fetch("https://script.google.com/macros/s/AKfycbzliHQEMx-QuS8B5Yi5r5DbPvT7sJ0fDGl4Ivhm8OjfLBmd2t8e9p7mGxy06BF5ZRQ/exec",{
     method:"POST",
     body:JSON.stringify({
+      consola:consolaActiva,
       nombre:document.getElementById("nombre").value,
       capacidad:document.getElementById("capacidad").value,
       juegos:juegosSel.join(", "),
@@ -239,4 +330,5 @@ async function enviar(){
 
 </body>
 </html>
+
 
