@@ -53,13 +53,16 @@ body{
 
 /* botones retro */
 button{
-  background:#001a00;
-  color:#00ff66;
+  background:#111;
+  color:#fff;
   border:2px solid #00ff66;
-  box-shadow:
-    0 0 8px #00ff66,
-    2px 0 4px #ff0033,
-   -2px 0 4px #00ccff;
+}
+
+select{
+  background:#111;
+  color:#fff;
+  border:2px solid #00ff66;
+  padding:8px;
 }
 
 button:hover{
@@ -149,15 +152,18 @@ button{
 </head>
 
 <body>
+<div id="consoleSection" class="container">
 
-  <!-- ===== PANTALLA CONSOLA ===== -->
-<div id="consoleSection">
+  <h2>🎮 Consola</h2>
 
-  <h1>🎮 Selecciona tu consola</h1>
+  <select id="consoleSelect" onchange="start()">
+    <option value="">Selecciona una consola...</option>
+    <option>Switch</option>
+    <option>GameCube</option>
+    <option>PSP</option>
+  </select>
 
-  <button onclick="selectConsole('Switch')">Switch</button>
-  <button onclick="selectConsole('GameCube')">GameCube</button>
-  <button onclick="selectConsole('PSP')">PSP</button>
+</div>
 
 </div>
 
@@ -289,9 +295,20 @@ function selectConsole(name){
   window.selectedConsole = name;
 }
 </script>
+<script>
+function start(){
+  const val = document.getElementById("consoleSelect").value;
+
+  if(!val) return;
+
+  document.getElementById("consoleSection").style.display="none";
+  document.getElementById("gamesSection").style.display="block";
+}
+</script>
 
 </body>
 </html>
+
 
 
 
