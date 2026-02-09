@@ -11,9 +11,10 @@
 body{
   background:#0a0a0a;
   color:#00ff66;
-  text-shadow:0 0 5px #00ff66;
-  position:relative;
-  overflow-x:hidden;
+  text-shadow:
+    0 0 4px #00ff66,
+    2px 0 2px #ff0033,
+   -2px 0 2px #00ccff;
 }
 
 /* scanlines */
@@ -55,7 +56,10 @@ button{
   background:#001a00;
   color:#00ff66;
   border:2px solid #00ff66;
-  box-shadow:0 0 10px #00ff66;
+  box-shadow:
+    0 0 8px #00ff66,
+    2px 0 4px #ff0033,
+   -2px 0 4px #00ccff;
 }
 
 button:hover{
@@ -174,6 +178,7 @@ button{
 </div>
 
 <script>
+
 const juegos = {
   "🟥 Switch": [
     ["Zelda BOTW",15],
@@ -266,6 +271,7 @@ async function enviar(){
 
 </body>
 </html>
+
 
 
 
