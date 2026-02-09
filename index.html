@@ -149,6 +149,18 @@ button{
 </head>
 
 <body>
+
+  <!-- ===== PANTALLA CONSOLA ===== -->
+<div id="consoleSection">
+
+  <h1>🎮 Selecciona tu consola</h1>
+
+  <button onclick="selectConsole('Switch')">Switch</button>
+  <button onclick="selectConsole('GameCube')">GameCube</button>
+  <button onclick="selectConsole('PSP')">PSP</button>
+
+</div>
+
 <div class="container">
 
 <img src="logo.png" class="logo">
@@ -178,6 +190,8 @@ button{
 </div>
 
 <script>
+
+  <div id="gamesSection" style="display:none;">
 
 const juegos = {
   "🟥 Switch": [
@@ -268,9 +282,17 @@ async function enviar(){
   alert("Pedido enviado ✅");
 }
 </script>
+<script>
+function selectConsole(name){
+  document.getElementById("consoleSection").style.display="none";
+  document.getElementById("gamesSection").style.display="block";
+  window.selectedConsole = name;
+}
+</script>
 
 </body>
 </html>
+
 
 
 
