@@ -100,10 +100,18 @@ button{ cursor:pointer; font-weight:bold; }
   <h2>🎮 Selecciona consola</h2>
 
   <select id="consoleSelect">
-    <option value="">Elegir...</option>
-    <option value="Switch">Switch</option>
-    <option value="GameCube">GameCube</option>
-    <option value="PSP">PSP</option>
+  <option value="">Elegir...</option>
+  <option>Switch</option>
+  <option>GameCube</option>
+  <option>PSP</option>
+  <option>PS2</option>
+  <option>PS3</option>
+  <option>Xbox</option>
+  <option>Xbox 360</option>
+  <option>Wii</option>
+  <option>WiiU</option>
+  <option>DS</option>
+  <option>3DS</option>
   </select>
 
   <button onclick="start()">Continuar</button>
@@ -122,9 +130,11 @@ button{ cursor:pointer; font-weight:bold; }
   <input id="nombre" placeholder="Nombre del cliente">
 
   <select id="capacidad">
-    <option value="32">32 GB</option>
-    <option value="64">64 GB</option>
-    <option value="128">128 GB</option>
+  <option value="28">32GB (28GB reales)</option>
+  <option value="56">64GB (56GB reales)</option>
+  <option value="90">128GB (90GB reales)</option>
+  <option value="210">256GB (210GB reales)</option>
+  <option value="470">512GB (470GB reales)</option>
   </select>
 
   <input id="buscador" placeholder="Buscar juego...">
@@ -145,18 +155,61 @@ button{ cursor:pointer; font-weight:bold; }
 let consolaActiva="";
 
 const juegos={
-  Switch:[
-    ["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14],
-    ["Pokemon Scarlet",8],["Animal Crossing",7],["Metroid Dread",4]
-  ],
-  GameCube:[
-    ["Wind Waker",1.4],["Mario Sunshine",1.5],["Luigi Mansion",1.2],
-    ["Metroid Prime",1.3],["Resident Evil 4",1.4]
-  ],
-  PSP:[
-    ["God of War",1.6],["GTA Vice City",1.7],["Monster Hunter",1.3],
-    ["Tekken 6",1.1],["Crisis Core",1.5]
-  ]
+ Switch:[
+["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14],["Pokemon Scarlet",8],
+["Animal Crossing",7],["Metroid Dread",4],["Splatoon 3",6],["Mario Odyssey",6]
+],
+
+GameCube:[
+["Wind Waker",1.4],["Mario Sunshine",1.5],["Luigi Mansion",1.2],
+["Metroid Prime",1.3],["Resident Evil 4",1.4],["Smash Melee",1.1]
+],
+
+PSP:[
+["God of War",1.6],["GTA Vice City",1.7],["Monster Hunter",1.3],
+["Tekken 6",1.1],["Crisis Core",1.5]
+],
+
+PS2:[
+["God of War 2",4.2],["GTA San Andreas",4.3],["Shadow of the Colossus",2.1],
+["Resident Evil 4",3.5],["DBZ Budokai Tenkaichi 3",4.0],["Metal Gear 3",3.8]
+],
+
+PS3:[
+["The Last of Us",38],["Uncharted 3",42],["GTA V",18],
+["God of War 3",35],["Red Dead Redemption",8],["Metal Gear 4",30]
+],
+
+Xbox:[
+["Halo 2",6],["Fable",4],["Ninja Gaiden Black",3],
+["Forza Motorsport",5],["Jet Set Radio Future",3]
+],
+
+"Xbox 360":[
+["Halo Reach",7],["Gears of War 3",8],["Forza Horizon",6],
+["Skyrim",7],["Red Dead Redemption",8],["GTA IV",7]
+],
+
+Wii:[
+["Mario Galaxy",4.3],["Mario Galaxy 2",4.2],["Zelda Skyward Sword",4.1],
+["Donkey Kong Returns",3.8],["Smash Brawl",6.9]
+],
+
+WiiU:[
+["Mario Kart 8",5.5],["Zelda BOTW",13],["Smash WiiU",14],
+["Splatoon",4.8],["Xenoblade X",22]
+],
+
+DS:[
+["Pokemon Black",0.25],["Mario Kart DS",0.06],["New Super Mario Bros",0.03],
+["Zelda Phantom Hourglass",0.12],["Castlevania Dawn of Sorrow",0.09]
+],
+
+"3DS":[
+["Pokemon Ultra Sun",3.6],["Zelda Ocarina 3D",0.6],["Mario 3D Land",0.5],
+["Monster Hunter 4U",3.8],["Fire Emblem Awakening",1.8]
+]
+
 };
 
 const lista=document.getElementById("lista");
@@ -256,3 +309,4 @@ async function enviar(){
 </script>
 </body>
 </html>
+
