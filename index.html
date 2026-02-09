@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Instalación de Juegos</title>
+
+<style>
+body{
+  background:#0b0b0b;
+  color:#00ff99;
+  font-family: 'Courier New', monospace;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.logo{
+  display:block;
+  margin:auto;
+  max-width:200px;
+}
+
+h1,h2{
+  text-align:center;
+  color:#00ffff;
+}
+
+select,input{
+  width:100%;
+  padding:8px;
+  margin:10px 0;
+  background:#111;
+  color:#00ff99;
+  border:1px solid #00ff99;
+}
+
+.console{
+  margin-top:25px;
+  padding:15px;
+  border:1px solid #00ff99;
+  border-radius:10px;
+}
+
+.game{
+  margin:4px 0;
+}
+
+.progress{
+  height:22px;
+  background:#333;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.bar{
+  height:100%;
+  width:0%;
+  background:#00ff99;
+  border-radius:10px;
+}
+
+button{
+  margin-top:20px;
+  width:100%;
+  padding:12px;
+  background:#00ff99;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<img src="logo.png" class="logo">
+
+<h1>🎮 Instalación de Juegos</h1>
+
+<input id="nombre" placeholder="Nombre del cliente">
+
+<select id="capacidad">
+  <option value="32">32 GB</option>
+  <option value="64">64 GB</option>
+  <option value="128">128 GB</option>
+</select>
+
+<input id="buscador" placeholder="🔍 Buscar juego...">
+
+<h2 id="uso">0 / 32 GB</h2>
+
+<div class="progress">
+  <div class="bar" id="bar"></div>
+</div>
+
+<div id="lista"></div>
+
+<button onclick="enviar()">Enviar pedido</button>
+
+</div>
+
+<script>
+const juegos = {
+  "🟥 Switch": [
+    ["Zelda BOTW",15],
+    ["Mario Kart 8",7],
+    ["Smash Bros",14]
+  ],
+  "🟪 GameCube": [
+    ["Mario Sunshine",1.5],
+    ["Luigi Mansion",1.2],
+    ["Zelda Wind Waker",1.4]
+  ],
+  "🔵 PSP": [
+    ["God of War",1.6],
+    ["GTA Vice City",1.7],
+    ["Monster Hunter",1.3]
+  ]
+};
+
+const lista = document.getElementById("lista");
+const buscador = document.getElementById("buscador");
+
+function render(){
+  lista.innerHTML="";
+  for(const consola in juegos){
+    let html = `<div class="console"><h3>${consola}</h3>`;
+    juegos[consola].forEach(j=>{
+      if(j[0].toLowerCase().includes(buscador.value.toLowerCase())){
+        html+=`
+        <div class="game">
+          <label>
+            <input type="checkbox" value="${j[1]}" data-name="${j[0]}">
+            ${j[0]} (${j[1]} GB)
+          </label>
+        </div>`;
+      }
+    });
+    html+="</div>";
+    lista.innerHTML+=html;
+  }
+  activar();
+}
+
+render();
+buscador.addEventListener("input",render);
+
+function activar(){
+  document.querySelectorAll("input[type=checkbox]")
+    .forEach(c=>c.addEventListener("change",calcular));
+}
+
+function calcular(){
+  let total=0;
+  const cap=Number(document.getElementById("capacidad").value);
+  document.querySelectorAll("input[type=checkbox]").forEach(c=>{
+    if(c.checked) total+=Number(c.value);
+  });
+  if(total>cap){
+    this.checked=false;
+    alert("Excede la capacidad");
+    return calcular();
+  }
+  document.getElementById("uso").textContent=`${total} / ${cap} GB`;
+  document.getElementById("bar").style.width=(total/cap*100)+"%";
+}
+
+async function enviar(){
+  let juegosSel=[];
+  let total=0;
+  document.querySelectorAll("input[type=checkbox]").forEach(c=>{
+    if(c.checked){
+      juegosSel.push(c.dataset.name);
+      total+=Number(c.value);
+    }
+  });
+
+  await fetch("https://script.google.com/macros/s/AKfycbzliHQEMx-QuS8B5Yi5r5DbPvT7sJ0fDGl4Ivhm8OjfLBmd2t8e9p7mGxy06BF5ZRQ/exec",{
+    method:"POST",
+    body:JSON.stringify({
+      nombre:document.getElementById("nombre").value,
+      capacidad:document.getElementById("capacidad").value,
+      juegos:juegosSel.join(", "),
+      espacio:total
+    })
+  });
+
+  alert("Pedido enviado ✅");
+}
+</script>
+
+</body>
+</html>
