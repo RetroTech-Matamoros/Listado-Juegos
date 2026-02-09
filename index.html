@@ -148,7 +148,7 @@ function start(){
 
 
 /* ===== JUEGOS ===== */
-
+let consolaActiva = "";
 const juegos={
   "Switch":[["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14]],
   "GameCube":[["Mario Sunshine",1.5],["Luigi Mansion",1.2],["Wind Waker",1.4]],
@@ -160,7 +160,12 @@ const buscador=document.getElementById("buscador");
 
 function render(){
   lista.innerHTML="";
-  for(const consola in juegos){
+const juegosConsola = juegos[consolaActiva];
+
+let html=`<div class="console"><h3>${consolaActiva}</h3>`;
+
+juegosConsola.forEach(j=>{
+
     let html=`<div class="console"><h3>${consola}</h3>`;
     juegos[consola].forEach(j=>{
       if(j[0].toLowerCase().includes(buscador.value.toLowerCase())){
@@ -234,3 +239,4 @@ async function enviar(){
 
 </body>
 </html>
+
