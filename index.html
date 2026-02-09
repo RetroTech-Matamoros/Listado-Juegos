@@ -1,219 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Instalación de Juegos</title>
-
-<style>
-
-/* ===== CRT ===== */
-body{
-  background:#0b0b0b;
-  color:#00ff99;
-  font-family:'Courier New', monospace;
-  text-align:center;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  background:repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 2px,
-    rgba(0,0,0,0.25) 3px
-  );
-}
-
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-  box-shadow:0 0 20px #00ff99;
-  border-radius:12px;
-  animation:fade .3s ease;
-}
-
-/* LOGO */
-.logo{
-  width:130px;
-  display:block;
-  margin:0 auto 12px;
-}
-
-/* inputs */
-select,input,button{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  background:#111;
-  color:#fff;
-  border:2px solid #00ff99;
-  border-radius:6px;
-}
-
-button{ cursor:pointer; font-weight:bold; }
-
-.smallBtn{
-  width:auto;
-  padding:6px 12px;
-}
-
-/* juegos */
-.game{
-  text-align:left;
-  padding:6px;
-  border:1px solid #00ff99;
-  border-radius:8px;
-  margin:4px 0;
-}
-
-.progress{
-  height:20px;
-  background:#333;
-  border-radius:10px;
-}
-
-.bar{
-  height:100%;
-  width:0%;
-  background:#00ff99;
-}
-
-@keyframes fade{
-  from{opacity:0}
-  to{opacity:1}
-}
-
-</style>
-</head>
-<body>
-
-<!-- ===== SELECTOR ===== -->
-<div id="consoleSection" class="container">
-
-  <img src="logo.png" class="logo">
-
-  <h2>🎮 Selecciona consola</h2>
-
-  <select id="consoleSelect">
-  <option value="">Elegir...</option>
-  <option>Switch</option>
-  <option>GameCube</option>
-  <option>PSP</option>
-  <option>PS2</option>
-  <option>PS3</option>
-  <option>Xbox</option>
-  <option>Xbox 360</option>
-  <option>Wii</option>
-  <option>WiiU</option>
-  <option>DS</option>
-  <option>3DS</option>
-  </select>
-
-  <button onclick="start()">Continuar</button>
-</div>
-
-
-<!-- ===== JUEGOS ===== -->
-<div id="gamesSection" class="container" style="display:none;">
-
-  <img src="logo.png" class="logo">
-
-  <button class="smallBtn" onclick="volver()">← Cambiar consola</button>
-
-  <h2 id="titulo"></h2>
-
-  <input id="nombre" placeholder="Nombre del cliente">
-
-  <select id="capacidad">
-  <option value="28">32GB (28GB reales)</option>
-  <option value="56">64GB (56GB reales)</option>
-  <option value="90">128GB (90GB reales)</option>
-  <option value="210">256GB (210GB reales)</option>
-  <option value="470">512GB (470GB reales)</option>
-  </select>
-
-  <input id="buscador" placeholder="Buscar juego...">
-
-  <h3 id="uso">0 / 32 GB</h3>
-
-  <div class="progress"><div class="bar" id="bar"></div></div>
-
-  <div id="lista"></div>
-
-  <button onclick="enviar()">Enviar pedido</button>
-</div>
-
-
 <script>
 
 /* ===== DATA ===== */
 let consolaActiva="";
+let seleccionados = new Set(); // ← guarda juegos marcados
 
-const juegos={
- Switch:[
-["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14],["Pokemon Scarlet",8],
-["Animal Crossing",7],["Metroid Dread",4],["Splatoon 3",6],["Mario Odyssey",6]
-],
-
-GameCube:[
-["Wind Waker",1.4],["Mario Sunshine",1.5],["Luigi Mansion",1.2],
-["Metroid Prime",1.3],["Resident Evil 4",1.4],["Smash Melee",1.1]
-],
-
-PSP:[
-["God of War",1.6],["GTA Vice City",1.7],["Monster Hunter",1.3],
-["Tekken 6",1.1],["Crisis Core",1.5]
-],
-
-PS2:[
-["God of War 2",4.2],["GTA San Andreas",4.3],["Shadow of the Colossus",2.1],
-["Resident Evil 4",3.5],["DBZ Budokai Tenkaichi 3",4.0],["Metal Gear 3",3.8]
-],
-
-PS3:[
-["The Last of Us",38],["Uncharted 3",42],["GTA V",18],
-["God of War 3",35],["Red Dead Redemption",8],["Metal Gear 4",30]
-],
-
-Xbox:[
-["Halo 2",6],["Fable",4],["Ninja Gaiden Black",3],
-["Forza Motorsport",5],["Jet Set Radio Future",3]
-],
-
-"Xbox 360":[
-["Halo Reach",7],["Gears of War 3",8],["Forza Horizon",6],
-["Skyrim",7],["Red Dead Redemption",8],["GTA IV",7]
-],
-
-Wii:[
-["Mario Galaxy",4.3],["Mario Galaxy 2",4.2],["Zelda Skyward Sword",4.1],
-["Donkey Kong Returns",3.8],["Smash Brawl",6.9]
-],
-
-WiiU:[
-["Mario Kart 8",5.5],["Zelda BOTW",13],["Smash WiiU",14],
-["Splatoon",4.8],["Xenoblade X",22]
-],
-
-DS:[
-["Pokemon Black",0.25],["Mario Kart DS",0.06],["New Super Mario Bros",0.03],
-["Zelda Phantom Hourglass",0.12],["Castlevania Dawn of Sorrow",0.09]
-],
-
-"3DS":[
-["Pokemon Ultra Sun",3.6],["Zelda Ocarina 3D",0.6],["Mario 3D Land",0.5],
-["Monster Hunter 4U",3.8],["Fire Emblem Awakening",1.8]
-]
-
-};
+const juegos = { /* tu objeto juegos queda EXACTAMENTE igual */ };
 
 const lista=document.getElementById("lista");
 const buscador=document.getElementById("buscador");
+
 
 /* ===== PANTALLAS ===== */
 function start(){
@@ -235,16 +30,25 @@ function volver(){
   lista.innerHTML="";
 }
 
-/* ===== RENDER ===== */
+
+/* ===== RENDER (FIX PRINCIPAL) ===== */
 function render(){
+
   lista.innerHTML="";
 
   juegos[consolaActiva].forEach(j=>{
+
     if(j[0].toLowerCase().includes(buscador.value.toLowerCase())){
+
+      const marcado = seleccionados.has(j[0]) ? "checked" : "";
+
       lista.innerHTML+=`
       <div class="game">
         <label>
-        <input type="checkbox" value="${j[1]}" data-name="${j[0]}">
+        <input type="checkbox"
+               value="${j[1]}"
+               data-name="${j[0]}"
+               ${marcado}>
         ${j[0]} (${j[1]} GB)
         </label>
       </div>`;
@@ -252,48 +56,66 @@ function render(){
   });
 
   activar();
+  recalcularBarra(); // ← restaura barra al filtrar
 }
 
 buscador.addEventListener("input",render);
 
+
 /* ===== CALCULO ===== */
 function activar(){
+
   document.querySelectorAll("input[type=checkbox]")
-    .forEach(c=>c.addEventListener("change",calcular));
+    .forEach(c=>{
+      c.addEventListener("change", function(){
+
+        const nombreJuego = this.dataset.name;
+
+        if(this.checked){
+          seleccionados.add(nombreJuego);
+        }else{
+          seleccionados.delete(nombreJuego);
+        }
+
+        recalcularBarra();
+      });
+    });
 }
 
-function calcular(){
-  let total=0;
-  const cap=Number(capacidad.value);
 
-  document.querySelectorAll("input[type=checkbox]").forEach(c=>{
-    if(c.checked) total+=Number(c.value);
+/* ===== NUEVO CALCULO GLOBAL ===== */
+function recalcularBarra(){
+
+  let total = 0;
+  const cap = Number(capacidad.value);
+
+  juegos[consolaActiva].forEach(j=>{
+    if(seleccionados.has(j[0])){
+      total += j[1];
+    }
   });
 
   if(total>cap){
-    this.checked=false;
     alert("Excede la capacidad");
     return;
   }
 
-  uso.textContent=`${total} / ${cap} GB`;
+  uso.textContent=`${total.toFixed(2)} / ${cap} GB`;
   bar.style.width=(total/cap*100)+"%";
 }
+
 
 /* ===== ENVIAR ===== */
 async function enviar(){
 
-  let juegosSel=[];
-  let total=0;
+  let juegosSel=[...seleccionados];
 
-  document.querySelectorAll("input[type=checkbox]").forEach(c=>{
-    if(c.checked){
-      juegosSel.push(c.dataset.name);
-      total+=Number(c.value);
-    }
+  let total=0;
+  juegos[consolaActiva].forEach(j=>{
+    if(seleccionados.has(j[0])) total+=j[1];
   });
 
-  await fetch("https://script.google.com/macros/s/AKfycbzliHQEMx-QuS8B5Yi5r5DbPvT7sJ0fDGl4Ivhm8OjfLBmd2t8e9p7mGxy06BF5ZRQ/exec",{
+  await fetch("TU_URL_AQUI",{
     method:"POST",
     body:JSON.stringify({
       nombre:nombre.value,
@@ -307,6 +129,4 @@ async function enviar(){
 }
 
 </script>
-</body>
-</html>
 
