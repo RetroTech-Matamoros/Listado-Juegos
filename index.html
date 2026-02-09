@@ -6,15 +6,13 @@
 
 <style>
 
-  /* ===== CRT RETRO EFFECT ===== */
+/* ===== CRT RETRO LIMPIO ===== */
 
 body{
-  background:#0a0a0a;
-  color:#00ff66;
-  text-shadow:
-    0 0 4px #00ff66,
-    2px 0 2px #ff0033,
-   -2px 0 2px #00ccff;
+  background:#0b0b0b;
+  color:#00ff99;
+  font-family:'Courier New', monospace;
+  text-align:center;
 }
 
 /* scanlines */
@@ -22,154 +20,93 @@ body::after{
   content:"";
   pointer-events:none;
   position:fixed;
-  top:0;
-  left:0;
   width:100%;
   height:100%;
   background:repeating-linear-gradient(
     to bottom,
-    rgba(0,0,0,0) 0px,
-    rgba(0,0,0,0) 2px,
+    transparent 0px,
+    transparent 2px,
     rgba(0,0,0,0.25) 3px
   );
-  z-index:999;
-}
-
-/* flicker suave */
-@keyframes flicker{
-  0%{opacity:0.95;}
-  50%{opacity:1;}
-  100%{opacity:0.96;}
-}
-
-body{
-  animation:flicker 0.15s infinite;
-}
-
-/* bordes glow */
-.container{
-  box-shadow:0 0 20px #00ff66;
-}
-
-/* botones retro */
-button{
-  background:#111;
-  color:#fff;
-  border:2px solid #00ff66;
-}
-
-select{
-  background:#111;
-  color:#fff;
-  border:2px solid #00ff66;
-  padding:8px;
-}
-
-button:hover{
-  background:#003300;
-  box-shadow:0 0 20px #00ff66;
-}
-
-/* inputs retro */
-input, select{
-  background:#001a00;
-  color:#00ff66;
-  border:1px solid #00ff66;
-}
-
-/* barra neon */
-.bar{
-  background:#00ff66;
-  box-shadow:0 0 10px #00ff66;
-}
-
-body{
-  background:#0b0b0b;
-  color:#00ff99;
-  font-family: 'Courier New', monospace;
 }
 
 .container{
   max-width:900px;
   margin:auto;
   padding:20px;
+  box-shadow:0 0 20px #00ff99;
+  border-radius:12px;
 }
 
 .logo{
-  display:block;
-  margin:auto;
   max-width:200px;
+  margin:10px auto;
 }
 
 h1,h2{
-  text-align:center;
   color:#00ffff;
 }
 
-select,input{
+select,input,button{
   width:100%;
-  padding:8px;
-  margin:10px 0;
+  padding:10px;
+  margin:8px 0;
   background:#111;
-  color:#00ff99;
-  border:1px solid #00ff99;
+  color:#fff;
+  border:2px solid #00ff99;
+  border-radius:6px;
 }
 
-.console{
-  margin-top:25px;
-  padding:15px;
-  border:1px solid #00ff99;
-  border-radius:10px;
-}
-
-.game{
-  margin:4px 0;
+button{
+  font-weight:bold;
+  cursor:pointer;
 }
 
 .progress{
-  height:22px;
+  height:20px;
   background:#333;
   border-radius:10px;
-  margin-top:10px;
 }
 
 .bar{
   height:100%;
   width:0%;
   background:#00ff99;
-  border-radius:10px;
 }
 
-button{
+.console{
   margin-top:20px;
-  width:100%;
-  padding:12px;
-  background:#00ff99;
-  font-weight:bold;
-  cursor:pointer;
+  border:1px solid #00ff99;
+  padding:10px;
+  border-radius:8px;
 }
+
 </style>
 </head>
 
 <body>
+
+<!-- ===== SELECTOR CONSOLA ===== -->
 <div id="consoleSection" class="container">
 
-  <h2>🎮 Consola</h2>
+  <img src="logo.png" class="logo">
 
-  <select id="consoleSelect" onchange="start()">
-    <option value="">Selecciona una consola...</option>
-    <option>Switch</option>
-    <option>GameCube</option>
-    <option>PSP</option>
+  <h2>🎮 Selecciona consola</h2>
+
+  <select id="consoleSelect">
+    <option value="">Elegir...</option>
+    <option value="Switch">Switch</option>
+    <option value="GameCube">GameCube</option>
+    <option value="PSP">PSP</option>
   </select>
 
-</div>
+  <button onclick="start()">Continuar</button>
 
 </div>
 
-<div class="container">
 
-<img src="logo.png" class="logo">
+<!-- ===== SECCIÓN JUEGOS ===== -->
+<div id="gamesSection" class="container" style="display:none;">
 
 <h1>🎮 Instalación de Juegos</h1>
 
@@ -191,48 +128,47 @@ button{
 
 <div id="lista"></div>
 
-<button type="button" onclick="enviar()">Enviar pedido</button>
+<button onclick="enviar()">Enviar pedido</button>
 
 </div>
 
+
+
 <script>
 
-  <div id="gamesSection" style="display:none;">
+/* ===== CAMBIO PANTALLA ===== */
+function start(){
+  const val=document.getElementById("consoleSelect").value;
+  if(!val) return alert("Selecciona una consola");
 
-const juegos = {
-  "🟥 Switch": [
-    ["Zelda BOTW",15],
-    ["Mario Kart 8",7],
-    ["Smash Bros",14]
-  ],
-  "🟪 GameCube": [
-    ["Mario Sunshine",1.5],
-    ["Luigi Mansion",1.2],
-    ["Zelda Wind Waker",1.4]
-  ],
-  "🔵 PSP": [
-    ["God of War",1.6],
-    ["GTA Vice City",1.7],
-    ["Monster Hunter",1.3]
-  ]
+  document.getElementById("consoleSection").style.display="none";
+  document.getElementById("gamesSection").style.display="block";
+}
+
+
+
+/* ===== JUEGOS ===== */
+
+const juegos={
+  "Switch":[["Zelda BOTW",15],["Mario Kart 8",7],["Smash Bros",14]],
+  "GameCube":[["Mario Sunshine",1.5],["Luigi Mansion",1.2],["Wind Waker",1.4]],
+  "PSP":[["God of War",1.6],["GTA Vice City",1.7],["Monster Hunter",1.3]]
 };
 
-const lista = document.getElementById("lista");
-const buscador = document.getElementById("buscador");
+const lista=document.getElementById("lista");
+const buscador=document.getElementById("buscador");
 
 function render(){
   lista.innerHTML="";
   for(const consola in juegos){
-    let html = `<div class="console"><h3>${consola}</h3>`;
+    let html=`<div class="console"><h3>${consola}</h3>`;
     juegos[consola].forEach(j=>{
       if(j[0].toLowerCase().includes(buscador.value.toLowerCase())){
         html+=`
-        <div class="game">
-          <label>
-            <input type="checkbox" value="${j[1]}" data-name="${j[0]}">
-            ${j[0]} (${j[1]} GB)
-          </label>
-        </div>`;
+        <label>
+        <input type="checkbox" value="${j[1]}" data-name="${j[0]}">
+        ${j[0]} (${j[1]} GB)
+        </label><br>`;
       }
     });
     html+="</div>";
@@ -252,22 +188,28 @@ function activar(){
 function calcular(){
   let total=0;
   const cap=Number(document.getElementById("capacidad").value);
+
   document.querySelectorAll("input[type=checkbox]").forEach(c=>{
     if(c.checked) total+=Number(c.value);
   });
+
   if(total>cap){
-    this.checked=false;
     alert("Excede la capacidad");
-    return calcular();
+    this.checked=false;
+    return;
   }
+
   document.getElementById("uso").textContent=`${total} / ${cap} GB`;
   document.getElementById("bar").style.width=(total/cap*100)+"%";
 }
 
+
+
 async function enviar(){
-  alert("FUNCION EJECUTADA");
+
   let juegosSel=[];
   let total=0;
+
   document.querySelectorAll("input[type=checkbox]").forEach(c=>{
     if(c.checked){
       juegosSel.push(c.dataset.name);
@@ -287,32 +229,8 @@ async function enviar(){
 
   alert("Pedido enviado ✅");
 }
-</script>
-<script>
-function selectConsole(name){
-  document.getElementById("consoleSection").style.display="none";
-  document.getElementById("gamesSection").style.display="block";
-  window.selectedConsole = name;
-}
-</script>
-<script>
-function start(){
-  const val = document.getElementById("consoleSelect").value;
 
-  if(!val) return;
-
-  document.getElementById("consoleSection").style.display="none";
-  document.getElementById("gamesSection").style.display="block";
-}
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
